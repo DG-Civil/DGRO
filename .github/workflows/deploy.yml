@@ -26,10 +26,13 @@ jobs:
 
       - name: Build Flet Web App
         run: |
-          flet build web --output build/web
+          flet build web --yes --verbose --base-url /${{ github.event.repository.name }} --route-url-strategy hash
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build/web
+          path: build/web
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
