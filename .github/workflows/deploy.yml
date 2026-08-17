@@ -2,11 +2,10 @@ name: Deploy Flet Web App 
 
 on:
 push:
-branches:
-- main 
+branches: [ main ] 
 
 permissions:
-contents: write
+contents: read
 pages: write
 id-token: write 
 
@@ -14,7 +13,7 @@ jobs:
 build-and-deploy:
 runs-on: ubuntu-latest
 steps:
-- name: Checkout code
+- name: Checkout repository
 uses: actions/checkout@v4 
 
 * name: Set up Python
@@ -24,11 +23,11 @@ python-version: '3.11'
 * name: Install dependencies
 run: |
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install flet; fi
 * name: Build Flet Web App
 run: |
 flet build web --yes --verbose --base-url /${{ github.event.repository.name }} --route-url-strategy hash
-* name: Upload Pages Artifact
+* name: Upload Artifact for GitHub Pages
 uses: actions/upload-pages-artifact@v3
 with:
 path: build/web
